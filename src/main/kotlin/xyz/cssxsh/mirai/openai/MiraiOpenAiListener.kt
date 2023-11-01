@@ -194,20 +194,7 @@ internal object MiraiOpenAiListener : SimpleListenerHost() {
             }
             return
         }
-        val system = event.message
-            .findIsInstance<PlainText>()?.content.orEmpty()
-            .removePrefix(MiraiOpenAiConfig.chat)
-            .replace("""#(<.+?>|\S+)""".toRegex()) { match ->
-                val (path) = match.destructured
-                try {
-                    MiraiOpenAiPrompts.prompt(path = path.removeSurrounding("<", ">"))
-                } catch (exception: FileNotFoundException) {
-                    logger.warning({ "文件不存在" }, exception)
-                    match.value
-                }
-            }
-            .replace("""[~.]\s+""".toRegex()) { _ -> MiraiOpenAiPrompts.prompt(event.sender.id, event.subject.id) }
-            .ifBlank { MiraiOpenAiPrompts.prompt(event.sender.id, event.subject.id) }
+        val system = MiraiOpenAiPrompts.prompt(event.sender.id, event.subject.id) 
         lock[event.sender.id] = event
         val buffer = mutableListOf<ChoiceMessage>()
         buffer.add(ChoiceMessage(role = "system", content = system))
