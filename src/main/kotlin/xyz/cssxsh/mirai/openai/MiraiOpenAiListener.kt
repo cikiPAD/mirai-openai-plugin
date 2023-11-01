@@ -226,8 +226,12 @@ internal object MiraiOpenAiListener : SimpleListenerHost() {
                 } else {
                     next.contentToString()
                 }
-                if (content == MiraiOpenAiConfig.stop) break
-
+                if (content == MiraiOpenAiConfig.stop) {
+                    launch {
+                        event.subject.sendMessage(event.message.quote() + "聊天已终止")
+                    }
+                    break
+                }
                 buffer.add(ChoiceMessage(role = "user", content = content))
 
                 val reply = send(event = event, buffer = buffer)
@@ -242,11 +246,12 @@ internal object MiraiOpenAiListener : SimpleListenerHost() {
                 is TimeoutCancellationException -> logger.info { "聊天已终止 ${event.sender}" }
                 else -> handleException(coroutineContext, ExceptionInEventHandlerException(event, cause = cause))
             }
-            if (MiraiOpenAiConfig.bye) {
-                launch {
-                    event.subject.sendMessage(event.message.quote() + "聊天已终止")
-                }
-            }
+            // 聊天终止只依赖指令
+            // if (MiraiOpenAiConfig.bye) {
+            //     launch {
+            //         event.subject.sendMessage(event.message.quote() + "聊天已终止")
+            //     }
+            // }
         }
     }
 
