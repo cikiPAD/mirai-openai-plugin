@@ -194,10 +194,14 @@ internal object MiraiOpenAiListener : SimpleListenerHost() {
             }
             return
         }
+
+
+        val reqMsg = event.message.contentToString()
         val system = MiraiOpenAiPrompts.prompt(event.sender.id, event.subject.id) 
         lock[event.sender.id] = event
         val buffer = mutableListOf<ChoiceMessage>()
         buffer.add(ChoiceMessage(role = "system", content = system))
+        buffer.add(ChoiceMessage(role = "user", content = reqMsg))
         val message = if (MiraiOpenAiConfig.atOnce) {
             send(event = event, buffer = buffer)
         } else {
