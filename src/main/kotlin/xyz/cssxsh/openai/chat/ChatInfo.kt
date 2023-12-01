@@ -1,6 +1,7 @@
 package xyz.cssxsh.openai.chat
 
 import kotlinx.serialization.*
+import kotlinx.serialization.json.JsonElement
 import xyz.cssxsh.openai.*
 
 @Serializable
