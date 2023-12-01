@@ -16,5 +16,7 @@ public data class ChatInfo(
     @SerialName("object")
     val type: String = "",
     @SerialName("usage")
-    val usage: Usage = Usage()
+    val usage: Usage = Usage(),
+    @Contextual
+    val unknownKeys: Map<String, JsonElement>
 )
