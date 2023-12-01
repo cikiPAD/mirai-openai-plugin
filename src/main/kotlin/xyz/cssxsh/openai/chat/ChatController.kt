@@ -4,6 +4,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import xyz.cssxsh.openai.*
+import kotlinx.serialization.json.Json
 
 /**
  * [Chat](https://platform.openai.com/docs/api-reference/chat)
@@ -20,7 +21,7 @@ public class ChatController(private val client: OpenAiClient) {
             setBody(request)
         }
 
-        return response.body()
+        return Json { ignoreUnknownKeys = true }.decodeFromString<ChatInfo>(response.body())
     }
 
     /**
